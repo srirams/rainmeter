@@ -53,7 +53,7 @@ class Rainmeter
 public:
 	static Rainmeter& GetInstance();
 
-	int Initialize(LPCWSTR iniPath, LPCWSTR layout);
+	int Initialize(LPCWSTR iniPath, LPCWSTR layout, bool isTaskbar = false);
 	void Finalize();
 
 	bool IsAlreadyRunning();
@@ -182,6 +182,8 @@ public:
 
 	static const std::vector<LPCWSTR>& GetOldDefaultPlugins();
 
+	bool IsTaskbar() { return m_IsTaskbar; }
+
 	friend class CommandHandler;
 	friend class ContextMenu;
 	friend class DialogManage;
@@ -280,6 +282,8 @@ private:
 	GlobalOptions m_GlobalOptions;
 
 	std::wstring m_BuildTime;
+
+	bool m_IsTaskbar;
 };
 
 // Convenience function.
@@ -292,5 +296,7 @@ inline Rainmeter& GetRainmeter() { return Rainmeter::GetInstance(); }
 #endif
 
 EXPORT_PLUGIN int RainmeterMain(LPWSTR cmdLine);
+EXPORT_PLUGIN HWND CreateTaskbarWindow(HWND parent);
+EXPORT_PLUGIN void DestroyTaskbarWindow();
 
 #endif

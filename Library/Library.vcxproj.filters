@@ -246,4 +246,12 @@
   <ItemGroup>
     <None Include="Exports.def" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\Application\AddFolder.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\Application\Rainmeter.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>

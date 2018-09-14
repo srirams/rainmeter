@@ -92,6 +92,27 @@ int RainmeterMain(LPWSTR cmdLine)
 	return ret;
 }
 
+static Skin* tw = NULL;
+
+HWND CreateTaskbarWindow(HWND parent)
+{
+	//SetDllDirectory(L"");
+	GetRainmeter().Initialize(NULL, NULL, true);
+	tw = new Skin(L"Taskbar", L"Taskbar.ini", WINDOWTYPE::TASKBAR, parent);
+	tw->Initialize();
+	return tw->GetWindow();
+}
+
+void DestroyTaskbarWindow()
+{
+	if (tw)
+	{
+		GetRainmeter().Finalize();
+		delete tw;
+		tw = NULL;
+	}
+}
+
 /*
 ** Constructor
 **
@@ -151,8 +172,10 @@ Rainmeter& Rainmeter::GetInstance()
 ** The main initialization function for the module.
 **
 */
-int Rainmeter::Initialize(LPCWSTR iniPath, LPCWSTR layout)
+int Rainmeter::Initialize(LPCWSTR iniPath, LPCWSTR layout, bool isTaskbar)
 {
+	m_IsTaskbar = isTaskbar;
+
 	if (!IsWindows7SP1OrGreater())
 	{
 		MessageBox(nullptr, L"Rainmeter requires Windows 7 SP1 (with Platform Update) or later.\n\nFor Windows XP or Vista, you can download Rainmeter 3.3 from www.rainmeter.net", APPNAME, MB_OK | MB_TOPMOST | MB_ICONERROR);
@@ -476,7 +499,6 @@ void Rainmeter::Finalize()
 	DeleteAllUnmanagedSkins();  // Redelete unmanaged windows caused by OnCloseAction
 
 	delete m_TrayIcon;
-
 	System::Finalize();
 
 	MeasureNet::UpdateIFTable();
@@ -486,7 +508,6 @@ void Rainmeter::Finalize()
 	MeasureNet::FinalizeStatic();
 	MeasureCPU::FinalizeStatic();
 	MeterString::FinalizeStatic();
-
 	Gfx::Canvas::Finalize();
 
 	// Change the work area back

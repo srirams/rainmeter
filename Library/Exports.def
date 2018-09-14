@@ -24,3 +24,6 @@ EXPORTS
 	pcre16_study		@7 NONAME
 	
 	SkinInstallerMain	@8 NONAME
+
+	CreateTaskbarWindow		@9 NONAME
+	DestroyTaskbarWindow	@10 NONAME

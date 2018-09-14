@@ -69,6 +69,12 @@ void ContextMenu::ShowMenu(POINT pos, Skin* skin)
 
 	SetMenuDefaultItem(menu, IDM_MANAGE, MF_BYCOMMAND);
 
+	if (rainmeter.IsTaskbar())
+	{
+		DeleteMenu(menu, GetMenuItemCount(menu) - 1, MF_BYPOSITION);
+		DeleteMenu(menu, GetMenuItemCount(menu) - 1, MF_BYPOSITION);
+	}
+
 	if (_waccess(GetLogger().GetLogFilePath().c_str(), 0) == -1)
 	{
 		EnableMenuItem(menu, IDM_SHOWLOGFILE, MF_BYCOMMAND | MF_GRAYED);

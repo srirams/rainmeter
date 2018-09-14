@@ -207,3 +207,6 @@ FONT 8, "MS Shell Dlg 2"
     LTEXT           "Installing...", IDC_INSTALLTAB_INPROGRESS_TEXT, 0, 0, 236, 60, NOT WS_VISIBLE
     CONTROL         "", IDC_INSTALLTAB_PROGRESS, "msctls_progress32", PBS_MARQUEE | NOT WS_VISIBLE | WS_BORDER, 0, 15, 236, 11
 }
+
+IDI_RAINMETER           ICON    DISCARDABLE     "..\\Application\\Rainmeter.ico"
+IDI_ADDFOLDER           ICON    DISCARDABLE     "..\\Application\\AddFolder.ico"

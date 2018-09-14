@@ -53,7 +53,7 @@ enum INTERVAL
 int Skin::c_InstanceCount = 0;
 bool Skin::c_IsInSelectionMode = false;
 
-Skin::Skin(const std::wstring& folderPath, const std::wstring& file) : m_FolderPath(folderPath), m_FileName(file),
+Skin::Skin(const std::wstring& folderPath, const std::wstring& file, WINDOWTYPE windowType, HWND parentWindow) : m_FolderPath(folderPath), m_FileName(file), m_WindowType(windowType), m_ParentWindow(parentWindow),
 	m_Canvas(),
 	m_Background(),
 	m_BackgroundSize(),
@@ -239,19 +239,38 @@ void Skin::Dispose(bool refresh)
 */
 void Skin::Initialize()
 {
-	m_Window = CreateWindowEx(
-		WS_EX_TOOLWINDOW | WS_EX_LAYERED,
-		METERWINDOW_CLASS_NAME,
-		nullptr,
-		WS_POPUP,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
-		nullptr,
-		nullptr,
-		GetRainmeter().GetModuleInstance(),
-		this);
+	if (m_WindowType == WINDOWTYPE::TASKBAR)
+	{
+		m_Window = CreateWindowEx(
+			WS_EX_LAYERED,
+			METERWINDOW_CLASS_NAME,
+			nullptr,
+			WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS,
+			0,
+			0,
+			CW_USEDEFAULT,
+			CW_USEDEFAULT,
+			m_ParentWindow,
+			nullptr,
+			GetRainmeter().GetModuleInstance(),
+			this);
+	}
+	else
+	{
+		m_Window = CreateWindowEx(
+			WS_EX_TOOLWINDOW | WS_EX_LAYERED,
+			METERWINDOW_CLASS_NAME,
+			nullptr,
+			WS_POPUP,
+			CW_USEDEFAULT,
+			CW_USEDEFAULT,
+			CW_USEDEFAULT,
+			CW_USEDEFAULT,
+			nullptr,
+			nullptr,
+			GetRainmeter().GetModuleInstance(),
+			this);
+	}
 
 	setlocale(LC_NUMERIC, "C");
 
@@ -416,7 +435,14 @@ void Skin::Refresh(bool init, bool all)
 		MapCoordsToScreen(m_ScreenX, m_ScreenY, m_WindowW, m_WindowH);
 	}
 
-	SetWindowPos(m_Window, nullptr, m_ScreenX, m_ScreenY, m_WindowW, m_WindowH, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOSENDCHANGING);
+	if (m_WindowType == WINDOWTYPE::TASKBAR)
+	{
+		SetWindowPos(m_Window, nullptr, 0, 0, m_WindowW, m_WindowH, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOSENDCHANGING | SWP_NOMOVE);
+	}
+	else
+	{
+		SetWindowPos(m_Window, nullptr, m_ScreenX, m_ScreenY, m_WindowW, m_WindowH, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOSENDCHANGING);
+	}		
 
 	ScreenToWindow();
 
@@ -559,6 +585,10 @@ void Skin::MapCoordsToScreen(int& x, int& y, int w, int h)
 */
 void Skin::MoveWindow(int x, int y)
 {
+	if (m_WindowType == WINDOWTYPE::TASKBAR)
+	{
+		return;
+	}
 	SetWindowPos(m_Window, nullptr, x, y, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE);
 
 	SavePositionIfAppropriate();
@@ -5056,7 +5086,15 @@ LRESULT Skin::OnDelayedMove(UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	// Move the window temporarily
 	ResizeWindow(false);
-	SetWindowPos(m_Window, nullptr, m_ScreenX, m_ScreenY, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE);
+
+	if (m_WindowType == WINDOWTYPE::TASKBAR)
+	{
+		SetWindowPos(m_Window, nullptr, 0, 0, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE);
+	}
+	else 
+	{
+		SetWindowPos(m_Window, nullptr, m_ScreenX, m_ScreenY, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE);
+	}	
 
 	return 0;
 }

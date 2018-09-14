@@ -84,6 +84,12 @@ enum RESIZEMODE
 	RESIZEMODE_RESET
 };
 
+enum WINDOWTYPE
+{
+	NORMAL = 0,
+	TASKBAR
+};
+
 class Rainmeter;
 class Measure;
 class Meter;
@@ -97,7 +103,7 @@ class TextFormat;
 class Skin : public Group
 {
 public:
-	Skin(const std::wstring& folderPath, const std::wstring& file);
+	Skin(const std::wstring& folderPath, const std::wstring& file, WINDOWTYPE windowType = WINDOWTYPE::NORMAL, HWND parentWindow = NULL);
 	~Skin();
 
 	Skin(const Skin& other) = delete;
@@ -452,6 +458,9 @@ private:
 
 	static int c_InstanceCount;
 	static bool c_IsInSelectionMode;
+
+	WINDOWTYPE m_WindowType;
+	HWND m_ParentWindow;
 };
 
 #endif
